@@ -1,0 +1,7 @@
+{
+    "solidity.defaultCompiler": "remote",
+    "[solidity]": {
+      "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+  },
+  }
+  
