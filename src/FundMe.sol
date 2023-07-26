@@ -22,14 +22,16 @@ contract FundMe {
 
     address[] public founders;
     mapping(address => uint256) public founderToAmountFounded;
+    AggregatorV3Interface priceFeed;
 
-    constructor() {
+    constructor(address _priceFeedAddress) {
+        priceFeed = AggregatorV3Interface(_priceFeedAddress);
         i_owner = msg.sender;
     }
 
     function fund() public payable {
         require(
-            msg.value.getConversionRate() >= MINIUMUM_USD,
+            msg.value.getConversionRate(priceFeed) >= MINIUMUM_USD,
             "Didn't send enoguh ETH"
         );
         founders.push(msg.sender);
@@ -62,9 +64,7 @@ contract FundMe {
     }
 
     function getVersion() public view returns (uint256) {
-        return
-            AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306)
-                .version();
+        return priceFeed.version();
     }
 
     modifier onlyOwner() {
