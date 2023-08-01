@@ -3,7 +3,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 import {Script} from "forge-std/Script.sol";
-import {MockV3Aggregator} from "@chainlink/contracts/src/v0.8/tests/MockV3Aggregator.sol";
+import {MockV3Aggregator} from "../test/mock/MockV3Aggregator.sol";
 
 contract HelperConfig is Script {
     NetworkConfig public activeNetworkConfig;
