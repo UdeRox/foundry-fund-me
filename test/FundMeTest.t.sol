@@ -10,6 +10,14 @@ contract FundMeTest is Test {
     FundMe fundMe;
     address USER = makeAddr("user");
     uint constant SEND_VALUE = 0.1 ether;
+    uint constant INITIAL_FUNDS = 10 ether;
+
+    modifier funded() {
+        vm.prank(USER);
+        vm.deal(USER, INITIAL_FUNDS);
+        fundMe.fund{value: SEND_VALUE}();
+        _;
+    }
 
     function setUp() external {
         console.log("Initialized the test setup");
@@ -28,16 +36,25 @@ contract FundMeTest is Test {
         assertEq(fundMe.i_owner(), msg.sender);
     }
 
-    function testWithoutEnoughEth() public {
+    function testSendWithoutEnoughEth() public {
         vm.expectRevert();
         fundMe.fund();
     }
 
-    function testUpdateEth() public {
-        vm.prank(USER);
-        vm.deal(USER, 10 ether);
-        fundMe.fund{value: SEND_VALUE}();
+    function testSendEnoughEth() public funded {
         assertEq(fundMe.getAddressToAmount(USER), SEND_VALUE);
+    }
+
+    function testWidrawOnlyOwner() public funded {
+        vm.expectRevert();
+        vm.prank(USER);
+        fundMe.withdraw();
+    }
+
+    function testAddFunderToArrayOfFunders() public funded {
+        // fundMe.getFunder()
+        address funder = fundMe.getFunder(0);
+        assertEq(USER, funder);
     }
 
     function testPriceFeedVersionIsAccurate() public {

@@ -38,7 +38,7 @@ contract FundMe {
         s_founderToAmountFounded[msg.sender] += msg.value;
     }
 
-    function withdraw() public {
+    function withdraw() public onlyOwner(){
         for (
             uint256 founderIndex = 0;
             founderIndex < s_founders.length;
