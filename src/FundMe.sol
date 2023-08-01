@@ -38,6 +38,32 @@ contract FundMe {
         s_founderToAmountFounded[msg.sender] += msg.value;
     }
 
+    function cheapWithdraw () public onlyOwner {
+        uint256 foundersLength = s_founders.length; 
+        for (
+            uint256 founderIndex = 0;
+            founderIndex < foundersLength;
+            founderIndex++
+        ) {
+            address founderAddress = s_founders[founderIndex];
+            s_founderToAmountFounded[founderAddress] = 0;
+        }
+        s_founders = new address[](0);
+
+        //transfer
+        // payable(msg.sender).transfer(address(this).balance);
+
+        //send
+        // bool withdrawSuccess =  payable(msg.sender).send(address(this).balance);
+        // require(withdrawSuccess, "Withdraw failed!");
+
+        //call
+        (bool withdrawSuccess, ) = payable(msg.sender).call{
+            value: address(this).balance
+        }("");
+        require(withdrawSuccess, "Withdraw failed!");
+    }
+
     function withdraw() public onlyOwner(){
         for (
             uint256 founderIndex = 0;
