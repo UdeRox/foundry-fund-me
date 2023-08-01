@@ -17,7 +17,7 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/Ag
 contract FundMe {
     using PriceConverter for uint256;
     uint256 public constant MINIUMUM_USD = 50 * 1e18;
-    address public immutable i_owner;
+    address private immutable i_owner;
     // uint256 public minimumUsd = 5;
 
     address[] private s_founders;
@@ -86,5 +86,9 @@ contract FundMe {
 
     function getAddressToAmount(address add) external view returns (uint256) {
         return s_founderToAmountFounded[add];
+    }
+
+    function getOwner () external view returns (address) {
+        return i_owner;
     }
 }
