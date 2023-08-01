@@ -20,8 +20,8 @@ contract FundMe {
     address public immutable i_owner;
     // uint256 public minimumUsd = 5;
 
-    address[] public founders;
-    mapping(address => uint256) public founderToAmountFounded;
+    address[] private s_founders;
+    mapping(address => uint256) private s_founderToAmountFounded;
     AggregatorV3Interface priceFeed;
 
     constructor(address _priceFeedAddress) {
@@ -34,20 +34,20 @@ contract FundMe {
             msg.value.getConversionRate(priceFeed) >= MINIUMUM_USD,
             "Didn't send enoguh ETH"
         );
-        founders.push(msg.sender);
-        founderToAmountFounded[msg.sender] += msg.value;
+        s_founders.push(msg.sender);
+        s_founderToAmountFounded[msg.sender] += msg.value;
     }
 
     function withdraw() public {
         for (
             uint256 founderIndex = 0;
-            founderIndex < founders.length;
+            founderIndex < s_founders.length;
             founderIndex++
         ) {
-            address founderAddress = founders[founderIndex];
-            founderToAmountFounded[founderAddress] = 0;
+            address founderAddress = s_founders[founderIndex];
+            s_founderToAmountFounded[founderAddress] = 0;
         }
-        founders = new address[](0);
+        s_founders = new address[](0);
 
         //transfer
         // payable(msg.sender).transfer(address(this).balance);
@@ -78,5 +78,13 @@ contract FundMe {
 
     receive() external payable {
         fund();
+    }
+
+    function getFunder(uint256 index) external view returns (address) {
+        return s_founders[index];
+    }
+
+    function getAddressToAmount(address add) external view returns (uint256) {
+        return s_founderToAmountFounded[add];
     }
 }
